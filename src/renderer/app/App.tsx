@@ -6,13 +6,13 @@ import HelloWorld from '../features/HelloWorld/HelloWorld'
 import '../styles.css' // スタイルが必要であればインポートします
 import SurvivalTypeScriptContainer from '../features/SurvivalTypeScript/SurvivalTypeScript'
 import TicTacToe from '../features/TicTacToe/TicTacToe'
-import { Tab, Box } from '@mui/material'
+import { Tab, Box, AppBar } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
 
 const App: React.FC = () => {
-  const [currentTab, setCurrentTab] = React.useState(1)
+  const [currentTab, setCurrentTab] = React.useState<string>('1')
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue)
   }
 
@@ -20,10 +20,10 @@ const App: React.FC = () => {
     <TabContext value={currentTab}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <TabList onChange={handleChange} aria-label='simple tabs example'>
-          <Tab label='Item One' value='1' />
-          <Tab label='Item Two' value='2' />
-          <Tab label='Item Three' value='3' />
-          <Tab label='Item Four' value='4' />
+          <Tab label='HelloWorld' value='1' />
+          <Tab label='Toggle HelloWorld' value='2' />
+          <Tab label='Good Button' value='3' />
+          <Tab label='TicTacToe' value='4' />
         </TabList>
       </Box>
       <TabPanel value='1'>
