@@ -1,42 +1,76 @@
 import React, { useState } from 'react'
-import { Button } from '@mui/material'
+import { Button, List, ListItem, ListItemText } from '@mui/material'
 
-export default function Board() {
-  const [xIsNext, setXIsNext] = useState<boolean>(true)
-  const [squares, setSquares] = useState<string[]>(Array(9).fill(''))
+interface GameProps {}
+
+const Game: React.FC<GameProps> = () => {
+  const [history, setHistory] = useState<string[][]>([Array(9).fill('')])
+  const currentSquares = history[history.length - 1]
   const [status, setStatus] = useState<string>('Next player: X')
+  const currentMove = history.length - 1
+  const xIsNext = currentMove % 2 === 0
+
+  const moves: React.JSX.Element[] = history.map(
+    (step: string[], move: number) => {
+      let description = move > 0 ? `Go to move #${move}` : 'Go to game start'
+      return (
+        <ListItem key={move}>
+          <ListItemText>{move + 1}. </ListItemText>
+          <Button
+            variant='contained'
+            onClick={() => jumpTo(move)}
+            sx={{ padding: '0' }}
+            className='w-full text-left px-2 py-1'
+          >
+            {description}
+          </Button>
+        </ListItem>
+      )
+    }
+  )
 
   return (
-    <div>
-      <div>{status}</div>
-      <div>
-        <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
-        <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
-        <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+    <div className='flex justify-start items-start space-x-4'>
+      <div className='game-board'>
+        <Board
+          squares={currentSquares}
+          onPlay={i => handleClick(i, currentSquares)}
+        />
       </div>
-      <div>
-        <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
-        <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
-        <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
-      </div>
-      <div>
-        <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
-        <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
-        <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+      <div className='game-info'>
+        <div>{status}</div>
+        <List component='nav' aria-label='main mailbox folders'>
+          {moves}
+        </List>
       </div>
     </div>
   )
 
-  function handleClick(i: number): void {
+  function handleClick(i: number, squares: string[]): void {
     if (squares[i] || calculateWinner(squares)) {
       return
     }
 
     const nextSquares = squares.slice()
     nextSquares[i] = xIsNext ? 'X' : 'O'
-    setSquares(nextSquares)
-    setXIsNext(!xIsNext)
+    setHistory(history.concat([nextSquares]))
     setStatus(calculateStatus(calculateWinner(nextSquares), !xIsNext))
+  }
+
+  function jumpTo(move: number): void {
+    setHistory(history.slice(0, move + 1))
+    setStatus(calculateStatus(calculateWinner(history[move]), move % 2 === 0))
+  }
+
+  function calculateStatus(
+    winner: string | undefined,
+    xIsNext: boolean
+  ): string {
+    if (winner) {
+      return `Winner: ${winner}`
+    } else {
+      return `Next player: ${xIsNext ? 'X' : 'O'}`
+    }
   }
 
   function calculateWinner(squares: string[]): string | undefined {
@@ -58,17 +92,33 @@ export default function Board() {
     })
     return resultLine ? squares[resultLine[0]] : undefined
   }
+}
 
-  function calculateStatus(
-    winner: string | undefined,
-    xIsNext: boolean
-  ): string {
-    if (winner) {
-      return `Winner: ${winner}`
-    } else {
-      return `Next player: ${xIsNext ? 'X' : 'O'}`
-    }
-  }
+interface BoardProps {
+  squares: string[]
+  onPlay: (i: number, squares: string[]) => void
+}
+
+const Board: React.FC<BoardProps> = ({ squares, onPlay }) => {
+  return (
+    <div>
+      <div>
+        <Square value={squares[0]} onSquareClick={() => onPlay(0, squares)} />
+        <Square value={squares[1]} onSquareClick={() => onPlay(1, squares)} />
+        <Square value={squares[2]} onSquareClick={() => onPlay(2, squares)} />
+      </div>
+      <div>
+        <Square value={squares[3]} onSquareClick={() => onPlay(3, squares)} />
+        <Square value={squares[4]} onSquareClick={() => onPlay(4, squares)} />
+        <Square value={squares[5]} onSquareClick={() => onPlay(5, squares)} />
+      </div>
+      <div>
+        <Square value={squares[6]} onSquareClick={() => onPlay(6, squares)} />
+        <Square value={squares[7]} onSquareClick={() => onPlay(7, squares)} />
+        <Square value={squares[8]} onSquareClick={() => onPlay(8, squares)} />
+      </div>
+    </div>
+  )
 }
 
 interface SquareProps {
@@ -87,3 +137,5 @@ const Square: React.FC<SquareProps> = ({ value, onSquareClick }) => {
     </Button>
   )
 }
+
+export default Game
