@@ -8,6 +8,7 @@ import SurvivalTypeScriptContainer from '../features/SurvivalTypeScript/Survival
 import TicTacToe from '../features/TicTacToe/TicTacToe'
 import { Tab, Box, AppBar } from '@mui/material'
 import { TabContext, TabList, TabPanel } from '@mui/lab'
+import InputField from '../features/InputField/InputField'
 
 const App: React.FC = () => {
   const [currentTab, setCurrentTab] = React.useState<string>('1')
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Tab label='Toggle HelloWorld' value='2' />
           <Tab label='Good Button' value='3' />
           <Tab label='TicTacToe' value='4' />
+          <Tab label='Input Field' value='5' />
         </TabList>
       </Box>
       <TabPanel value='1'>
@@ -49,6 +51,11 @@ const App: React.FC = () => {
       <TabPanel value='4'>
         <div>
           <TicTacToe />
+        </div>
+      </TabPanel>
+      <TabPanel value='5'>
+        <div>
+          <InputField />
         </div>
       </TabPanel>
     </TabContext>
