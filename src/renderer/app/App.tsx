@@ -37,8 +37,14 @@ const App: React.FC = () => {
   return (
     <TabContext value={currentTab}>
       <Stack>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <TabList onChange={handleChange} aria-label='simple tabs example'>
+        <Box
+          sx={{ borderBottom: 1, borderColor: 'divider', overflowX: 'auto' }}
+        >
+          <TabList
+            onChange={handleChange}
+            aria-label='simple tabs example'
+            variant='scrollable'
+          >
             {contentsList.map((content, index) => (
               <Tab
                 key={index}
