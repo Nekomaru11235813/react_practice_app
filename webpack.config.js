@@ -24,6 +24,9 @@ const mainConfig = {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist/main'),
   },
+  watchOptions: {
+    ignored: /node_modules/,
+  },
 }
 
 const renderConfig = {
@@ -72,6 +75,9 @@ const renderConfig = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist/renderer'),
+  },
+  watchOptions: {
+    ignored: /node_modules/,
   },
 }
 

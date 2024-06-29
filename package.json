@@ -22,7 +22,7 @@
     "test-electron:watch": "mocha --watch",
     "test-electron:coverage": "nyc mocha",
     "wdio": "wdio run ./wdio.conf.js",
-    "dev:electron": "cross-env NODE_ENV=development webpack --mode development && electron ."
+    "dev:electron": "cross-env NODE_ENV=development webpack --mode development && concurrently \"webpack --mode development --watch\" \"electron .\""
   },
   "keywords": [],
   "author": "",
@@ -34,6 +34,7 @@
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.15",
     "@reduxjs/toolkit": "^2.2.3",
+    "concurrently": "^8.2.2",
     "module": "^1.2.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

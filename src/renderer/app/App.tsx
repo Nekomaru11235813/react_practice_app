@@ -15,6 +15,7 @@ const App: React.FC = () => {
   const [currentTab, setCurrentTab] = React.useState<string>('1')
 
   const contentsList = [
+    { label: 'DiaryApp', content: <DiaryApp /> },
     { label: 'HelloWorld', content: <HelloReact /> },
     {
       label: 'Toggle HelloWorld',
@@ -27,7 +28,6 @@ const App: React.FC = () => {
     { label: 'Good Button', content: <SurvivalTypeScriptContainer /> },
     { label: 'TicTacToe', content: <TicTacToe /> },
     { label: 'Input Field', content: <InputField /> },
-    { label: 'DiaryApp', content: <DiaryApp /> },
   ]
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {

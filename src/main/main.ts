@@ -3,6 +3,9 @@ import * as path from 'path'
 
 let mainWindow: BrowserWindow | null
 
+// 開発時には electron アプリをホットリロードする
+// electron-reload の mainFileを'main.js'でハードコーディングする
+const filePath = path.resolve(__dirname, '..')
 const execPath = path.resolve(
   __dirname,
   '..',
@@ -11,13 +14,10 @@ const execPath = path.resolve(
   '.bin',
   'electron' + (process.platform === 'win32' ? '.cmd' : '')
 )
-
-// 開発時には electron アプリをホットリロードする
-// electron-reload の mainFileを'main.js'でハードコーディングする
 if (process.env.NODE_ENV === 'development') {
-  require('electron-reload')(__dirname, {
+  require('electron-reload')(filePath, {
     electron: execPath,
-    forceHardReset: true,
+    forceHardReset: false,
     hardResetMethod: 'exit',
   })
 }
