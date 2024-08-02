@@ -4,7 +4,9 @@
     "target": "es2019",
     "outDir": "./dist/main",
     "lib": ["es2019"],
-    "strict": true
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
   },
   "include": ["src/main/**/*"]
 }
