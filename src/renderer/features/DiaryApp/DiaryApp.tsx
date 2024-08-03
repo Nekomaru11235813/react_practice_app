@@ -49,7 +49,15 @@ const ApplicationBar = () => {
   )
 }
 
-const DrawerMenu = ({ drawerOpen, toggleDrawer }) => {
+interface DrawerMenuProps {
+  drawerOpen: boolean
+  toggleDrawer: () => void
+}
+
+const DrawerMenu: React.FC<DrawerMenuProps> = ({
+  drawerOpen,
+  toggleDrawer,
+}) => {
   return (
     <Drawer
       variant='persistent'
@@ -81,7 +89,14 @@ const DrawerMenu = ({ drawerOpen, toggleDrawer }) => {
   )
 }
 
-function EditorArea({ drawerOpen, toggleDrawer }) {
+interface EditorAreaProps {
+  drawerOpen: boolean
+  toggleDrawer: () => void
+}
+const EditorArea: React.FC<EditorAreaProps> = ({
+  drawerOpen,
+  toggleDrawer,
+}) => {
   return (
     <Box
       sx={{

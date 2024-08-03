@@ -2,6 +2,7 @@ export { IdValidate }
 import { ValidateI } from './validateInterface'
 import * as E from 'fp-ts/lib/Either.js'
 import { pipe } from 'fp-ts/lib/function.js'
+import 'reflect-metadata'
 import { injectable } from 'tsyringe'
 
 @injectable()

@@ -1,5 +1,5 @@
 export { ValidateI }
-import { Typed } from './typeUtil.ts'
+import { Typed } from './typeUtil'
 import * as E from 'fp-ts/lib/Either.js'
 
 interface ValidateI extends Typed {

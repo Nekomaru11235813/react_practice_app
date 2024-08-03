@@ -1,7 +1,7 @@
 export { DiaryRepositoryI }
-import { Id } from '../../../common/typeUtil.js'
+import { Id } from '../../../common/typeUtil'
 import * as TE from 'fp-ts/lib/TaskEither.js'
-import { Article } from '../domain/entity/article.js'
+import { Article } from '../domain/entity/article'
 
 interface DiaryRepositoryI {
   findById(id: Id): TE.TaskEither<Error, Article>

@@ -1,7 +1,8 @@
 export { container }
+import 'reflect-metadata'
 import { container } from 'tsyringe'
-import { ArticleValidate } from './feature/diaryApp/domain/entity/validate/articleValidate.js'
-import { IdValidate } from './common/idValidate.js'
+import { ArticleValidate } from './feature/diaryApp/domain/entity/validate/articleValidate'
+import { IdValidate } from './common/idValidate'
 
 container.register('ArticleValidate', {
   useClass: ArticleValidate,

@@ -1,9 +1,10 @@
 export { Article }
-import { Id, Ent, Saveable } from '../../../../common/typeUtil.js'
+import { Id, Ent, Saveable } from '../../../../common/typeUtil'
 import * as O from 'fp-ts/lib/Option.js'
 import { Do } from 'fp-ts-contrib/lib/Do.js'
-import { container } from '../../../../diContainer.js'
-import { ValidateI } from '../../../../common/validateInterface.js'
+import { container } from '../../../../diContainer'
+import { ValidateI } from '../../../../common/validateInterface'
+import * as E from 'fp-ts/lib/Either.js'
 
 class Article implements Ent<Article>, Saveable {
   readonly _id: O.Option<Id>
@@ -17,20 +18,40 @@ class Article implements Ent<Article>, Saveable {
   constructor(
     title: string,
     content: string,
-    id?: Id,
-    createdAt?: Date,
-    updatedAt?: Date
+    id: O.Option<Id>,
+    createdAt: O.Option<Date>,
+    updatedAt: O.Option<Date>
   ) {
-    this._id = O.fromNullable(id)
+    this._id = id
     this.title = title
     this.content = content
-    this._createdAt = O.fromNullable(createdAt)
-    this._updatedAt = O.fromNullable(updatedAt)
+    this._createdAt = createdAt
+    this._updatedAt = updatedAt
     this.validate = container.resolve('ArticleValidate')
   }
 
-  static of(title: string, content: string): Article {
-    return new Article(title, content)
+  static of(
+    title: string,
+    content: string,
+    id?: Id,
+    createdAt?: Date,
+    updatedAt?: Date
+  ): E.Either<Error, Article> {
+    const validate = container.resolve('ArticleValidate') as ValidateI
+    const result = validate.validate({ title, content })
+    if (E.isLeft(result)) {
+      return result
+    } else {
+      return E.right(
+        new Article(
+          title,
+          content,
+          O.fromNullable(id),
+          O.fromNullable(createdAt),
+          O.fromNullable(updatedAt)
+        )
+      )
+    }
   }
 
   equals(other: Article): boolean {

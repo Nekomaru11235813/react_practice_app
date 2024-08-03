@@ -1,4 +1,5 @@
 export { Typed, Vo, Id, Ent, Saveable }
+import 'reflect-metadata'
 import * as Eq from 'fp-ts/lib/Eq.js'
 import * as O from 'fp-ts/lib/Option.js'
 import { ValidateI } from './validateInterface'
