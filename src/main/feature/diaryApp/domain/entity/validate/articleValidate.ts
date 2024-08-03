@@ -3,6 +3,7 @@ export { ArticleValidate }
 import { ValidateI } from '../../../../../common/validateInterface'
 import * as E from 'fp-ts/lib/Either.js'
 import { pipe } from 'fp-ts/lib/function.js'
+import 'reflect-metadata'
 import { injectable } from 'tsyringe'
 
 @injectable()
