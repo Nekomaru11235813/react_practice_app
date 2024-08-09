@@ -4,6 +4,7 @@ import * as TE from 'fp-ts/lib/TaskEither.js'
 import { Article } from '../domain/entity/article'
 
 interface DiaryRepositoryI {
+  init(): TE.TaskEither<Error, void>
   findById(id: Id): TE.TaskEither<Error, Article>
   save(article: Article): TE.TaskEither<Error, Article>
   delete(id: Id): TE.TaskEither<Error, Article>
