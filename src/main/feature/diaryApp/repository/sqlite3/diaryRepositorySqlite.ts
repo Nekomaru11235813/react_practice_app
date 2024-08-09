@@ -38,13 +38,21 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
                               title VARCHAR(255) NOT NULL,
                               content TEXT,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`
+                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+                              
+                              CREATE TRIGGER diaries_before_trigger AFTER UPDATE ON diaries
+                                BEGIN
+                                  UPDATE diaries SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
+                                END`
         db.exec(initCommand)
       },
       e =>
         e instanceof Error
           ? e
-          : new Error('Unknown error has occurred while initializing database.')
+          : new Error(
+              'Unknown error has occurred while initializing database. : ' +
+                String(e)
+            )
     )
   }
 
@@ -66,7 +74,9 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
       e =>
         e instanceof Error
           ? e
-          : new Error('Unknown error occurred while finding article.')
+          : new Error(
+              'Unknown error occurred while finding article. : ' + String(e)
+            )
     )
   }
   save(article: Article): TE.TaskEither<Error, Article> {
@@ -97,7 +107,9 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
       e =>
         e instanceof Error
           ? e
-          : new Error('Unknown error occurred while saving article.')
+          : new Error(
+              'Unknown error occurred while saving article. : ' + String(e)
+            )
     )
   }
   delete(id: Id): TE.TaskEither<Error, Article> {
@@ -125,7 +137,9 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
       e =>
         e instanceof Error
           ? e
-          : new Error('Unknown error occurred while deleting article.')
+          : new Error(
+              'Unknown error occurred while deleting article. : ' + String(e)
+            )
     )
   }
   update(article: Article): TE.TaskEither<Error, Article> {
@@ -137,21 +151,14 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
         const db = this.db()
         const now = new Date()
         const result = db
-          .prepare(
-            'UPDATE diaries SET title = ?, content = ? , updated_at = ? WHERE id = ?'
-          )
-          .run(
-            article.title,
-            article.content,
-            now.toISOString,
-            article._id.value
-          )
+          .prepare('UPDATE diaries SET title = ?, content = ?  WHERE id = ?')
+          .run(article.title, article.content, article._id.value.value)
         if (result.changes === 0) {
           throw new Error('Article not found.')
         }
         const updatedArticle = db
           .prepare('SELECT * FROM diaries WHERE id = ?')
-          .get(article._id.value)
+          .get(article._id.value.value)
         if (!updatedArticle) {
           throw new Error('Failed to update article.')
         }
@@ -169,7 +176,9 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
       e =>
         e instanceof Error
           ? e
-          : new Error('Unknown error occurred while updating article.')
+          : new Error(
+              'Unknown error occurred while updating article. : ' + String(e)
+            )
     )
   }
 

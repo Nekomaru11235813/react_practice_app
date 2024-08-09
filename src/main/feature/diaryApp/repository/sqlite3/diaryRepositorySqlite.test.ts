@@ -2,6 +2,7 @@ import { DiaryRepositorySQlite } from './diaryRepositorySqlite'
 import * as E from 'fp-ts/lib/Either.js'
 import { Article } from '../../domain/entity/article'
 import { Id } from '../../../../common/typeUtil'
+import { fail } from 'assert'
 
 describe('DiaryRepositorySQlite', () => {
   let diaryRepository: DiaryRepositorySQlite
@@ -62,29 +63,28 @@ describe('DiaryRepositorySQlite', () => {
     const saveResult = await diaryRepository.findById(new Id('1'))()
     expect(E.isRight(saveResult)).toBeTruthy()
     if (E.isLeft(saveResult)) {
-      console.error(saveResult.left)
-      return
+      fail(saveResult.left)
     }
     const updatedArticle = Article.of('baz', 'qux', new Id('1'))
     expect(E.isRight(updatedArticle)).toBeTruthy()
     if (E.isLeft(updatedArticle)) {
-      console.error(updatedArticle.left)
-      return
+      fail(updatedArticle.left)
     }
+    // wait for 1 second to update _updatedAt
+    const wait = await new Promise(resolve => setTimeout(resolve, 1000))
     const result = await diaryRepository.update(updatedArticle.right)()
     if (E.isLeft(result)) {
-      console.error(result.left)
-      return
+      fail(result.left)
     }
     expect(E.isRight(result)).toBeTruthy()
 
     const findResult = await diaryRepository.findById(new Id('1'))()
     expect(E.isRight(findResult)).toBeTruthy()
     if (E.isLeft(findResult)) {
-      console.log(findResult.left)
-      return
+      fail(findResult.left)
     }
     expect(findResult.right.title).toBe('baz')
     expect(findResult.right.content).toBe('qux')
+    expect(findResult.right._createdAt).not.toEqual(findResult.right._updatedAt)
   })
 })
