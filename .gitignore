@@ -26,3 +26,6 @@ npm-debug.log*
 
 # テスト結果
 /coverage
+
+# DB
+*.db
