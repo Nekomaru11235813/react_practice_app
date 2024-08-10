@@ -21,4 +21,20 @@ describe('ArticleValidate', () => {
     const result = articleValidate.validate(input)
     expect(E.isRight(result)).toBeTruthy()
   })
+
+  test('content is not string', () => {
+    const input2 = {
+      title: 'title',
+      content: undefined,
+    } as any
+    const result2 = articleValidate.validate(input2)
+    expect(E.isLeft(result2)).toBeTruthy()
+
+    const input3 = {
+      title: 'title',
+      content: null,
+    } as any
+    const result3 = articleValidate.validate(input3)
+    expect(E.isLeft(result3)).toBeTruthy()
+  })
 })

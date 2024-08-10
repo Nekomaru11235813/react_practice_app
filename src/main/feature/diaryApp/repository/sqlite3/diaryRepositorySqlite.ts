@@ -8,10 +8,13 @@ import * as O from 'fp-ts/lib/Option.js'
 import * as E from 'fp-ts/lib/Either.js'
 import * as t from 'io-ts'
 import { pipe } from 'fp-ts/lib/function.js'
+import { withFallback } from 'io-ts-types/lib/withFallback'
+import { Summary } from '../../domain/entity/summary'
 
+const StringOrNull = withFallback(t.string, '')
 const ArticleCodec = t.type({
   title: t.string,
-  content: t.string,
+  content: StringOrNull,
   id: t.number,
   created_at: t.string,
   updated_at: t.string,
@@ -36,7 +39,7 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
                               CREATE TABLE diaries (
                               id INTEGER PRIMARY KEY,
                               title VARCHAR(255) NOT NULL,
-                              content TEXT,
+                              content TEXT NOT NULL,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
                               
@@ -56,20 +59,20 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
     )
   }
 
-  findById(id: Id): TE.TaskEither<Error, Article> {
+  findById(id: Id): TE.TaskEither<Error, O.Option<Article>> {
     return TE.tryCatch(
       async () => {
         const row = this.db()
           .prepare('SELECT * FROM diaries WHERE id = ?')
           .get(id.value)
         if (!row) {
-          throw new Error('Article not found.')
+          return O.none
         }
         const articleEither = this.toArticle(row)
         if (E.isLeft(articleEither)) {
           throw articleEither.left
         }
-        return articleEither.right
+        return O.some(articleEither.right)
       },
       e =>
         e instanceof Error
@@ -178,6 +181,54 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
           ? e
           : new Error(
               'Unknown error occurred while updating article. : ' + String(e)
+            )
+    )
+  }
+
+  getAllSummary(): TE.TaskEither<Error, Summary[]> {
+    return TE.tryCatch(
+      async () => {
+        const db = this.db()
+        const rowType = t.type({
+          id: t.number,
+          title: t.string,
+          summary: StringOrNull,
+          created_at: t.string,
+          updated_at: t.string,
+        })
+        const rows = db
+          .prepare(
+            `SELECT id, 
+                    SUBSTRING(content, 1, 100) AS summary,
+                    title, 
+                    created_at, 
+                    updated_at 
+              FROM diaries
+              ORDER BY created_at DESC`
+          )
+          .all()
+        const decodedRows = rows.map(row => rowType.decode(row))
+
+        if (decodedRows.some(E.isLeft)) {
+          throw new Error('Invalid row data.')
+        }
+        return decodedRows
+          .filter(E.isRight)
+          .map(x => x.right)
+          .map(row => ({
+            id: new Id(String(row.id)),
+            title: row.title,
+            summary: row.summary,
+            createdAt: new Date(row.created_at),
+            updatedAt: new Date(row.updated_at),
+          }))
+      },
+      e =>
+        e instanceof Error
+          ? e
+          : new Error(
+              'Unknown error occurred while getting all article names with ids. : ' +
+                String(e)
             )
     )
   }

@@ -3,8 +3,9 @@ import * as E from 'fp-ts/lib/Either.js'
 import { Article } from '../../domain/entity/article'
 import { Id } from '../../../../common/typeUtil'
 import { fail } from 'assert'
+import * as O from 'fp-ts/lib/Option.js'
 
-describe('DiaryRepositorySQlite', () => {
+describe('DiaryRepositorySQlite_HappyPath', () => {
   let diaryRepository: DiaryRepositorySQlite
   let init: E.Either<Error, void>
   let sampleArtcile: E.Either<Error, Article>
@@ -56,7 +57,7 @@ describe('DiaryRepositorySQlite', () => {
     expect(E.isRight(result)).toBeTruthy()
 
     const findResult = await diaryRepository.findById(new Id('1'))()
-    expect(E.isLeft(findResult)).toBeTruthy()
+    expect(E.isRight(findResult) && O.isNone(findResult.right)).toBeTruthy()
   })
 
   it('should update article', async () => {
@@ -83,8 +84,13 @@ describe('DiaryRepositorySQlite', () => {
     if (E.isLeft(findResult)) {
       fail(findResult.left)
     }
-    expect(findResult.right.title).toBe('baz')
-    expect(findResult.right.content).toBe('qux')
-    expect(findResult.right._createdAt).not.toEqual(findResult.right._updatedAt)
+    if (O.isNone(findResult.right)) {
+      fail('findResult is None')
+    }
+    expect(findResult.right.value.title).toBe('baz')
+    expect(findResult.right.value.content).toBe('qux')
+    expect(findResult.right.value._createdAt).not.toEqual(
+      findResult.right.value._updatedAt
+    )
   })
 })

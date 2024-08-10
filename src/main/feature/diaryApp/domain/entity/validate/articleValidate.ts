@@ -11,7 +11,10 @@ class ArticleValidate implements ValidateI {
   readonly _tag = 'ArticleValidate'
 
   validate(input: { title: string; content: string }) {
-    const validates = [this.titleMustNotBeEmpty(input.title)]
+    const validates = [
+      this.titleMustNotBeEmpty(input.title),
+      this.contentMustNotBeEmpty(input.content),
+    ]
     return pipe(
       validates,
       E.sequenceArray,
@@ -23,5 +26,11 @@ class ArticleValidate implements ValidateI {
     return title.length !== 0
       ? E.right(true)
       : E.left(new Error('title is empty'))
+  }
+
+  contentMustNotBeEmpty(content: unknown) {
+    return typeof content === 'string'
+      ? E.right(true)
+      : E.left(new Error('content is not string'))
   }
 }
