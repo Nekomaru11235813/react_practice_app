@@ -18,8 +18,23 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import CssBaseline from '@mui/material/CssBaseline'
 import MenuIcon from '@mui/icons-material/Menu'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
-
+import { container } from '../../app/diContainer'
+import { DiaryAppServiceI } from './API/diaryAppServiceI'
 const App: React.FC = () => {
+  const diaryAppService = container.resolve<DiaryAppServiceI>('diaryAppService')
+  const sendHello = async () => {
+    const result = await diaryAppService.sendHello('World')
+    console.log(result)
+  }
+  const init = async () => {
+    await diaryAppService.init()
+    console.log('init is done')
+  }
+  const getAllDiarySummary = async () => {
+    const result = await diaryAppService.getAllDiarySummary()
+    console.log(result)
+  }
+
   const [drawerOpen, setDrawerOpen] = React.useState<boolean>(true)
 
   const toggleDrawer = () => {
@@ -31,6 +46,9 @@ const App: React.FC = () => {
       <CssBaseline />
       <DrawerMenu drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
       <EditorArea drawerOpen={drawerOpen} toggleDrawer={toggleDrawer} />
+      <Button onClick={sendHello}>Hello</Button>
+      <Button onClick={init}>Init</Button>
+      <Button onClick={getAllDiarySummary}>Get All Diary Summary</Button>
     </Box>
   )
 }

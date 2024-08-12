@@ -1,5 +1,5 @@
 export { DiaryApplicationService }
-import { container } from 'tsyringe'
+import { container } from '../../../../diContainer'
 import { Article } from '../../domain/entity/article'
 import { Id } from '../../../../common/typeUtil'
 import { DiaryRepositoryI } from '../../repository/diaryRepositoryI'
@@ -21,6 +21,10 @@ class DiaryApplicationService {
 
   constructor() {
     this.repository = container.resolve('DiaryRepository')
+  }
+
+  init(): TE.TaskEither<Error, void> {
+    return this.repository.init()
   }
 
   saveArticle(command: ArticleSaveCommand): TE.TaskEither<Error, Article> {

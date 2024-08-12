@@ -27,6 +27,9 @@ const mainConfig = {
   watchOptions: {
     ignored: /node_modules/,
   },
+  externals: {
+    'better-sqlite3': 'commonjs better-sqlite3',
+  },
 }
 
 const renderConfig = {
@@ -81,4 +84,32 @@ const renderConfig = {
   },
 }
 
-module.exports = [mainConfig, renderConfig]
+const preloadConfig = {
+  target: 'electron-preload',
+  entry: './src/preload/preload.ts', // あなたのpreloadエントリポイントへのパス
+  output: {
+    path: path.resolve(__dirname, 'dist/preload'),
+    filename: 'preload.bundle.js',
+  },
+  node: {
+    __dirname: false,
+    __filename: false,
+  },
+  resolve: {
+    extensions: ['.js', '.ts'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        exclude: /node_modules/,
+        options: {
+          configFile: 'tsconfig.preload.json',
+        },
+      },
+    ],
+  },
+}
+
+module.exports = [mainConfig, renderConfig, preloadConfig]
