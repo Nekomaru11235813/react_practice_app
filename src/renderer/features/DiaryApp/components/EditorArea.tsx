@@ -34,6 +34,7 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
         const result = await diaryAppService.createDiary(nowEditingDiary)
         const summaryList = await diaryAppService.getAllDiarySummary()
         setSummaryList(_ => summaryList)
+        setNowEditingDiary(_ => result)
       }
       createDiary()
     } else {
@@ -45,6 +46,34 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
       }
       updateDiary()
     }
+  }
+  const deleteDiary = () => {
+    const deleteDiary = async () => {
+      if (nowEditingDiary.id !== undefined) {
+        const result = await diaryAppService.deleteDiary(nowEditingDiary.id)
+        const summaryList = await diaryAppService.getAllDiarySummary()
+        setSummaryList(_ => summaryList)
+        if (summaryList.length > 0) {
+          const diary = await diaryAppService.getDiary(summaryList[0].id.value)
+          if (diary != undefined) {
+            setNowEditingDiary(_ => diary)
+          } else {
+            console.error('The first diary is undefined')
+          }
+        } else {
+          setNowEditingDiary(_ => {
+            return {
+              id: undefined,
+              title: '',
+              content: '',
+              createdAt: undefined,
+              updatedAt: undefined,
+            }
+          })
+        }
+      }
+    }
+    deleteDiary()
   }
 
   return (
@@ -63,10 +92,10 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
         <IconButton>
           <EditIcon />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={deleteDiary}>
           <DeleteIcon />
         </IconButton>
-        <IconButton onClick={() => upsertDiary()}>
+        <IconButton onClick={upsertDiary}>
           <SaveIcon />
         </IconButton>
       </Box>

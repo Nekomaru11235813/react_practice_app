@@ -70,6 +70,7 @@ const App: React.FC = () => {
         summaryList={summaryList}
         nowEditingDiary={nowEditingDiary}
         setNowEditingDiary={setNowEditingDiary}
+        setSummaryList={setSummaryList}
       />
       <EditorArea
         drawerOpen={drawerOpen}

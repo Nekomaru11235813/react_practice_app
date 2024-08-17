@@ -19,6 +19,7 @@ export interface DrawerMenuProps {
   summaryList: Summary[]
   nowEditingDiary: DiaryDTO
   setNowEditingDiary: (diary: DiaryDTO) => void
+  setSummaryList: (fn: (_: Summary[]) => Summary[]) => void
 }
 
 export const DrawerMenu: React.FC<DrawerMenuProps> = ({
@@ -27,6 +28,7 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({
   summaryList,
   nowEditingDiary,
   setNowEditingDiary,
+  setSummaryList,
 }) => {
   const diaryAppService = container.resolve<DiaryAppServiceI>('diaryAppService')
   const handleListItemClick = (id: string) => {
@@ -42,6 +44,16 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({
       .catch(err => {
         console.error(err)
       })
+  }
+
+  const createEditingDiary = () => {
+    setNowEditingDiary({
+      id: undefined,
+      title: '',
+      content: '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
   }
 
   return (
@@ -61,12 +73,25 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({
       <IconButton onClick={toggleDrawer}>
         <ChevronLeftIcon />
       </IconButton>
-      <Button fullWidth variant='contained' color='primary'>
+      <Button
+        fullWidth
+        variant='contained'
+        color='primary'
+        onClick={createEditingDiary}
+      >
         新規作成
       </Button>
       <List>
+        {nowEditingDiary.id == undefined && (
+          <ListItemButton>
+            <ListItemText
+              primary={'(未保存)' + nowEditingDiary.title}
+              secondary={'(未保存)'}
+            />
+          </ListItemButton>
+        )}
         {summaryList
-          .sort((a, b) => parseInt(a.id.value) - parseInt(b.id.value))
+          .sort((a, b) => parseInt(b.id.value) - parseInt(a.id.value))
           .map((summary, index) => (
             <ListItemButton key={summary.id.value}>
               <ListItemText
