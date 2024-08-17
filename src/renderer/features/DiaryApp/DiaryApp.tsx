@@ -37,28 +37,19 @@ const App: React.FC = () => {
   })
   // 初期描画時にサマリーリスト、初期編集を取得
   useEffect(() => {
-    diaryAppService
-      .getAllDiarySummary()
-      .then(result => {
-        setSummaryList(_ => result)
-        if (result.length > 0) {
-          diaryAppService
-            .getDiary(result[0].id.value)
-            .then(diary => {
-              if (diary != undefined) {
-                setNowEditingDiary(diary)
-              } else {
-                console.error('The first diary is undefined')
-              }
-            })
-            .catch(err => {
-              console.error(err)
-            })
+    const fetchData = async () => {
+      const summaryList = await diaryAppService.getAllDiarySummary()
+      setSummaryList(summaryList)
+      if (summaryList.length > 0) {
+        const diary = await diaryAppService.getDiary(summaryList[0].id.value)
+        if (diary != undefined) {
+          setNowEditingDiary(diary)
+        } else {
+          console.error('The first diary is undefined')
         }
-      })
-      .catch(err => {
-        console.error(err)
-      })
+      }
+    }
+    fetchData()
     return () => {
       console.log('cleanup')
     }
@@ -77,11 +68,15 @@ const App: React.FC = () => {
         drawerOpen={drawerOpen}
         toggleDrawer={toggleDrawer}
         summaryList={summaryList}
+        nowEditingDiary={nowEditingDiary}
+        setNowEditingDiary={setNowEditingDiary}
       />
       <EditorArea
         drawerOpen={drawerOpen}
         toggleDrawer={toggleDrawer}
         nowEditingDiary={nowEditingDiary}
+        setNowEditingDiary={setNowEditingDiary}
+        setSummaryList={setSummaryList}
       />
     </Box>
   )

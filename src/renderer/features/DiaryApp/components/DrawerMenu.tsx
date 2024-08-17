@@ -9,18 +9,41 @@ import {
 } from '@mui/material'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
 import { Summary } from '../../../../types/diaryApp'
+import { DiaryDTO } from '../../../../types/diaryApp'
+import { DiaryAppServiceI } from '../API/diaryAppServiceI'
+import { container } from '../../../app/diContainer'
 
 export interface DrawerMenuProps {
   drawerOpen: boolean
   toggleDrawer: () => void
   summaryList: Summary[]
+  nowEditingDiary: DiaryDTO
+  setNowEditingDiary: (diary: DiaryDTO) => void
 }
 
 export const DrawerMenu: React.FC<DrawerMenuProps> = ({
   drawerOpen,
   toggleDrawer,
   summaryList,
+  nowEditingDiary,
+  setNowEditingDiary,
 }) => {
+  const diaryAppService = container.resolve<DiaryAppServiceI>('diaryAppService')
+  const handleListItemClick = (id: string) => {
+    diaryAppService
+      .getDiary(id)
+      .then(diary => {
+        if (diary != undefined) {
+          setNowEditingDiary(diary)
+        } else {
+          console.error('The diary is undefined')
+        }
+      })
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
   return (
     <Drawer
       variant='persistent'
@@ -42,14 +65,17 @@ export const DrawerMenu: React.FC<DrawerMenuProps> = ({
         新規作成
       </Button>
       <List>
-        {summaryList.map((summary, index) => (
-          <ListItemButton key={summary.id.value}>
-            <ListItemText
-              primary={summary.title}
-              secondary={summary.createdAt.toDateString()}
-            />
-          </ListItemButton>
-        ))}
+        {summaryList
+          .sort((a, b) => parseInt(a.id.value) - parseInt(b.id.value))
+          .map((summary, index) => (
+            <ListItemButton key={summary.id.value}>
+              <ListItemText
+                primary={summary.title}
+                secondary={summary.createdAt.toDateString()}
+                onClick={() => handleListItemClick(summary.id.value)}
+              />
+            </ListItemButton>
+          ))}
       </List>
     </Drawer>
   )

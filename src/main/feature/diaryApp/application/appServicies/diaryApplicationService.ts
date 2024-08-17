@@ -58,18 +58,18 @@ class DiaryApplicationService {
   updateArticle(command: ArticleUpdateCommand): TE.TaskEither<Error, Article> {
     return Do(TE.Monad)
       .bind(
-        'articleEither',
+        'newArticle',
         TE.fromEither(
           Article.of(command.title, command.content, new Id(command.id))
         )
       )
       .bind('articleOption', this.repository.findById(new Id(command.id)))
-      .bindL('article', ({ articleOption }) => {
+      .bindL('article', ({ articleOption, newArticle }) => {
         return pipe(
           articleOption,
           O.fold(
             () => TE.left(new Error('Article not found')),
-            article => this.repository.update(article)
+            article => this.repository.update(newArticle)
           )
         )
       })
