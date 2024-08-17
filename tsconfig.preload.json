@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2020", // Set the target ECMAScript version
+    "module": "commonjs", // Specify the module system
+    "jsx": "preserve", // Enable JSX syntax
+    "strict": true, // Enable strict type checking
+    "esModuleInterop": true, // Enable interoperability between CommonJS and ES modules
+    "skipLibCheck": true, // Skip type checking of all declaration files
+    "forceConsistentCasingInFileNames": true, // Ensure consistent casing of file names
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "outDir": "./dist/preload",
+    "lib": ["es2019"],
+  },
+  "include": ["./src/preload/**/*", "src/types/**/*"]
+}

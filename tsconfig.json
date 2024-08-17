@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "types" : ["node", "jest", ] 
+  },
+}

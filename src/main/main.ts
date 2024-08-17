@@ -1,5 +1,7 @@
 import { app, BrowserWindow } from 'electron'
 import * as path from 'path'
+import { ipcMain } from 'electron'
+import { diaryAPI } from './feature/diaryApp/diaryAPI'
 
 let mainWindow: BrowserWindow | null
 
@@ -27,8 +29,9 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      // preload: path.join(__dirname, 'preload.js')
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, '../preload/preload.bundle.js'),
     },
   })
 
@@ -52,3 +55,5 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+diaryAPI(ipcMain)
