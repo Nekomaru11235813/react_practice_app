@@ -14,7 +14,7 @@ export type SavedDiaryDTO = {
 }
 
 export type Summary = {
-  id: string
+  id: { tag: 'Id'; value: string }
   title: string
   summary: string
   createdAt: Date

@@ -74,7 +74,7 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
         }
         return O.some(articleEither.right)
       },
-      e =>
+      (e: any) =>
         e instanceof Error
           ? e
           : new Error(

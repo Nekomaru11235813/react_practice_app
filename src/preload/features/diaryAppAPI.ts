@@ -1,17 +1,60 @@
-import { createDecipheriv } from 'crypto'
-import { create } from 'domain'
 import { contextBridge, ipcRenderer } from 'electron'
 import { DiaryDTO } from '../../types/diaryApp'
 
 export function diaryAppAPIPreload() {
   contextBridge.exposeInMainWorld('diaryAPI', {
-    init: () => ipcRenderer.invoke('init'),
-    sendHello: (data: string) => ipcRenderer.invoke('send-hello', data),
-    getAllDiarySummary: () => ipcRenderer.invoke('get-all-diary-summary'),
-    getDiary: (arg: { id: string }) => ipcRenderer.invoke('get-diary', arg),
-    createDiary: (dto: DiaryDTO) => ipcRenderer.invoke('create-diary', dto),
-    updateDiary: (dto: DiaryDTO) => ipcRenderer.invoke('update-diary', dto),
-    deleteDiary: (arg: { id: string }) =>
-      ipcRenderer.invoke('delete-diary', arg),
+    init: () => {
+      try {
+        return ipcRenderer.invoke('init')
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
+    sendHello: (data: string) => {
+      try {
+        return ipcRenderer.invoke('send-hello', data)
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
+    getAllDiarySummary: () => {
+      try {
+        return ipcRenderer.invoke('get-all-diary-summary')
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
+    getDiary: (arg: { id: string }) => {
+      try {
+        return ipcRenderer.invoke('get-diary', arg)
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
+    createDiary: (dto: DiaryDTO) => {
+      try {
+        return ipcRenderer.invoke('create-diary', dto)
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
+    updateDiary: (dto: DiaryDTO) => {
+      try {
+        return ipcRenderer.invoke('update-diary', dto)
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
+    deleteDiary: (arg: { id: string }) => {
+      try {
+        return ipcRenderer.invoke('delete-diary', arg)
+      } catch (e: any) {
+        throwError(e)
+      }
+    },
   })
+}
+
+function throwError(e: any) {
+  throw Error(String(e) + String(e.stack))
 }
