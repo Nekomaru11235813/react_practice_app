@@ -22,7 +22,8 @@
     "test-electron:watch": "mocha --watch",
     "test-electron:coverage": "nyc mocha",
     "wdio": "wdio run ./wdio.conf.js",
-    "dev:electron": "cross-env NODE_ENV=development webpack --mode development && concurrently \"webpack --mode development --watch\" \"electron .\""
+    "dev:electron": "cross-env NODE_ENV=development webpack --mode development && concurrently \"webpack --mode development --watch\" \"electron .\"",
+    "postinstall": "patch-package"
   },
   "keywords": [],
   "author": "",
@@ -81,6 +82,7 @@
     "lint-staged": "^15.2.2",
     "mini-css-extract-plugin": "^2.9.0",
     "mocha": "^10.4.0",
+    "patch-package": "^8.0.0",
     "postcss": "^8.4.38",
     "postcss-loader": "^8.1.1",
     "prettier": "^3.2.5",
