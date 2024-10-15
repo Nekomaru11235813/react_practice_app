@@ -23,8 +23,7 @@
     "test-electron:coverage": "nyc mocha",
     "wdio": "wdio run ./wdio.conf.js",
     "dev:electron": "cross-env NODE_ENV=development webpack --mode development && concurrently \"webpack --mode development --watch\" \"electron .\"",
-    "postinstall": "patch-package",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "patch-package && electron-builder install-app-deps"
   },
   "keywords": [],
   "author": "",
