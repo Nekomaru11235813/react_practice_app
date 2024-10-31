@@ -35,7 +35,7 @@
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.15",
     "@reduxjs/toolkit": "^2.2.3",
-    "better-sqlite3": "^11.1.2",
+    "better-sqlite3": "^11.5.0",
     "concurrently": "^8.2.2",
     "fp-ts": "^2.16.9",
     "fp-ts-contrib": "^0.1.29",
