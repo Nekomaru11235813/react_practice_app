@@ -38,6 +38,7 @@ const App: React.FC = () => {
   // 初期描画時にサマリーリスト、初期編集を取得
   useEffect(() => {
     const fetchData = async () => {
+      await diaryAppService.init()
       const summaryList = await diaryAppService.getAllDiarySummary()
       setSummaryList(summaryList)
       if (summaryList.length > 0) {

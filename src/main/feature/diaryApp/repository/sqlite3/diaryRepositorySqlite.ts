@@ -10,6 +10,7 @@ import * as t from 'io-ts'
 import { pipe } from 'fp-ts/lib/function.js'
 import { withFallback } from 'io-ts-types/lib/withFallback'
 import { Summary } from '../../domain/entity/summary'
+import fs from 'fs'
 
 const StringOrNull = withFallback(t.string, '')
 const ArticleCodec = t.type({
@@ -27,6 +28,10 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
     this.dbPath = path
   }
 
+  public getDatabase() {
+    return this.db()
+  }
+
   private db() {
     return new Database(this.dbPath, { verbose: console.log })
   }
@@ -35,8 +40,15 @@ class DiaryRepositorySQlite implements DiaryRepositoryI {
     return TE.tryCatch(
       async () => {
         const db = this.db()
-        const initCommand = `DROP TABLE IF EXISTS diaries;
-                              CREATE TABLE diaries (
+        const tableIfExists = db
+          .prepare(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='diaries'"
+          )
+          .get()
+        if (tableIfExists) {
+          return
+        }
+        const initCommand = `CREATE TABLE diaries (
                               id INTEGER PRIMARY KEY,
                               title VARCHAR(255) NOT NULL,
                               content TEXT NOT NULL,

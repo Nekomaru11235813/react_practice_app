@@ -4,27 +4,30 @@ import { Article } from '../../domain/entity/article'
 import { Id } from '../../../../common/typeUtil'
 import { fail } from 'assert'
 import * as O from 'fp-ts/lib/Option.js'
+import fs from 'fs'
 
 describe('DiaryRepositorySQlite_HappyPath', () => {
-  let diaryRepository: DiaryRepositorySQlite
+  let diaryRepository: DiaryRepositorySQlite = new DiaryRepositorySQlite()
   let init: E.Either<Error, void>
-  let sampleArtcile: E.Either<Error, Article>
+  let sampleArticle: E.Either<Error, Article>
   let save: E.Either<Error, Article>
 
+  const dbPath = 'testArticle.db'
+
   beforeEach(async () => {
-    diaryRepository = new DiaryRepositorySQlite()
-    diaryRepository.setDbPath('testArticle.db')
+    diaryRepository.setDbPath(dbPath)
+    diaryRepository.getDatabase().exec('DROP TABLE IF EXISTS diaries')
     init = await diaryRepository.init()()
     if (E.isLeft(init)) {
       console.error(init.left)
       return
     }
-    sampleArtcile = Article.of('title', 'content')
-    if (E.isLeft(sampleArtcile)) {
-      console.error(sampleArtcile.left)
+    sampleArticle = Article.of('title', 'content')
+    if (E.isLeft(sampleArticle)) {
+      console.error(sampleArticle.left)
       return
     }
-    save = await diaryRepository.save(sampleArtcile.right)()
+    save = await diaryRepository.save(sampleArticle.right)()
     if (E.isLeft(save)) {
       console.error(save.left)
       return
@@ -32,7 +35,7 @@ describe('DiaryRepositorySQlite_HappyPath', () => {
   })
   it('should initialize database', async () => {
     expect(E.isRight(init)).toBeTruthy()
-    expect(E.isRight(sampleArtcile)).toBeTruthy()
+    expect(E.isRight(sampleArticle)).toBeTruthy()
     expect(E.isRight(save)).toBeTruthy()
   })
 
