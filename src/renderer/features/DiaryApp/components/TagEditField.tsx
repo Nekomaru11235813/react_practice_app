@@ -1,9 +1,10 @@
 import { Box, Chip, InputBase, TextField } from '@mui/material'
 import React, { useCallback, useEffect } from 'react'
+import { TagChip } from './TagChip'
 
 export interface TagEditFieldProps {}
 
-type Tag = {
+export type Tag = {
   id: number
   name: string
   isSaved: boolean
@@ -19,11 +20,11 @@ export const TagEditField: React.FC<TagEditFieldProps> = () => {
   const [textValue, setTextValue] = React.useState<string>('')
   const [tags, setTags] = React.useState<Tag[]>(defaultTags)
 
-  const handleDelete = (tag: Tag) => {
+  const handleChipDelete = (tag: Tag) => {
     const newTags = tags.filter(t => t.id !== tag.id)
     setTags(newTags)
   }
-  const handleClick = () => {}
+  const handleChipClick = () => {}
   const delimiters = /[ 　\t\n]/g
   const hasDelimiter = (text: string) => {
     return text.match(delimiters) !== null
@@ -70,11 +71,11 @@ export const TagEditField: React.FC<TagEditFieldProps> = () => {
       <Box>
         {tags.map(tag => {
           return (
-            <Chip
+            <TagChip
               key={tag.id}
-              label={'# ' + tag.name}
-              onClick={handleClick}
-              onDelete={() => handleDelete(tag)}
+              tag={tag}
+              onClick={handleChipClick}
+              onDelete={() => handleChipDelete(tag)}
             />
           )
         })}
