@@ -7,6 +7,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { DiaryDTO, SavedDiaryDTO, Summary } from '../../../../types/diaryApp'
 import { DiaryAppServiceI } from '../API/diaryAppServiceI'
 import { container } from '../../../app/diContainer'
+import { TagEditField } from './TagEditField'
 
 export interface EditorAreaProps {
   drawerOpen: boolean
@@ -117,6 +118,7 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
         value={nowEditingDiary.content}
         onChange={handleChange}
       />
+      <TagEditField />
     </Box>
   )
 }
