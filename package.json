@@ -10,7 +10,7 @@
     "test:ci": "jest --ci",
     "test:clearCache": "jest --clearCache",
     "start": "npm run build && electron .",
-    "build": "electron-rebuild && cross-env NODE_ENV=production webpack --mode production",
+    "build": "electron-rebuild -f && cross-env NODE_ENV=production webpack --mode production",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,md}\"",
