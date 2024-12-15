@@ -7,19 +7,24 @@ export const useTagField = (
   defaultInputValue: string,
   tagService: TagServiceI
 ) => {
+  // Constants
+  const DELIMITERS = /[ 　\t\n]/g
+  // State
   const [textValue, setTextValue] = React.useState<string>(defaultInputValue)
   const [tags, setTags] = React.useState<Tag[]>(defaultTags)
   const [suggestTimer, setSuggestTimer] = React.useState<NodeJS.Timeout | null>(
     null
   )
   const [tagSuggestions, setTagSuggestions] = React.useState<Tag[]>([])
-  const delimiters = /[ 　\t\n]/g
+
+  // Functions
+  // Helper functions
   const hasDelimiter = (text: string) => {
-    return text.match(delimiters) !== null
+    return text.match(DELIMITERS) !== null
   }
   const isValidNewTag = (tagName: string, tags: Tag[]) => {
     return (
-      tagName.match(delimiters) == null &&
+      tagName.match(DELIMITERS) == null &&
       tagName !== '' &&
       !tags.some(t => t.name === tagName)
     )
@@ -27,58 +32,89 @@ export const useTagField = (
   const generateNewTags = (inputValue: string, tags: Tag[]) => {
     const lastId = tags.length > 0 ? tags[tags.length - 1].id : 0
     const newTags = inputValue
-      .split(delimiters)
+      .split(DELIMITERS)
       .filter(tagName => isValidNewTag(tagName, tags))
       .map((tagName, index) => {
         return { id: lastId + index + 1, name: tagName, isSaved: false }
       })
     return [...tags, ...newTags]
   }
-
-  const resetTimer = (
-    callBack: () => void,
-    ms: number,
-    oldTimer: NodeJS.Timeout | null,
-    setTimer: React.Dispatch<React.SetStateAction<NodeJS.Timeout | null>>
-  ) => {
-    if (oldTimer) {
-      clearTimeout(oldTimer)
-      setTimer(null)
+  const resetSuggestTimer = (callBack: () => void, ms: number) => {
+    if (suggestTimer) {
+      clearTimeout(suggestTimer)
+      setSuggestTimer(null)
     }
-    setTimer(setTimeout(callBack, ms))
+    setSuggestTimer(setTimeout(callBack, ms))
   }
   const fetchSuggestions = async (inputValue: string) => {
     try {
-      const tags = await tagService.getTagsByPrefix(inputValue)
-      setTagSuggestions(tags)
+      return await tagService.getTagsByPrefix(inputValue)
     } catch {
       console.error('Failed to fetch tag suggestions')
-      setTagSuggestions([])
+      return []
     }
   }
 
+  interface setStatesProps {
+    newTextValue: string
+    newTags: Tag[]
+    newTagSuggestions: Tag[]
+  }
+
+  const setStates = ({
+    newTextValue,
+    newTags,
+    newTagSuggestions,
+  }: setStatesProps) => {
+    setTextValue(newTextValue)
+    setTags(newTags)
+    setTagSuggestions(newTagSuggestions)
+  }
+
+  // Event handlers
+  // chip event handlers
+  const handleChipDelete = (tag: Tag) => {
+    const newTags = tags.filter(t => t.id !== tag.id)
+    setTags(newTags)
+  }
+  const handleChipClick = () => {}
+  // input event handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value
-    console.log({ inputValue: inputValue })
     if (!inputValue) {
-      resetTimer(() => {}, 0, suggestTimer, setSuggestTimer)
-      setTagSuggestions([])
-      setTextValue('')
+      setStates({
+        newTextValue: '',
+        newTags: tags,
+        newTagSuggestions: [],
+      })
+      resetSuggestTimer(() => {}, 0)
     } else if (hasDelimiter(inputValue)) {
-      resetTimer(() => {}, 0, suggestTimer, setSuggestTimer)
-      setTags(generateNewTags(inputValue, tags))
-      setTagSuggestions([])
-      setTextValue('')
+      setStates({
+        newTextValue: '',
+        newTags: generateNewTags(inputValue, tags),
+        newTagSuggestions: [],
+      })
+      resetSuggestTimer(() => {}, 0)
     } else {
-      resetTimer(
-        () => fetchSuggestions(inputValue),
-        500,
-        suggestTimer,
-        setSuggestTimer
-      )
-      setTextValue(inputValue)
+      setStates({
+        newTextValue: inputValue,
+        newTags: tags,
+        newTagSuggestions: [],
+      })
+      resetSuggestTimer(async () => {
+        const suggestions = await fetchSuggestions(inputValue)
+        setTagSuggestions(suggestions)
+      }, 500)
     }
   }
 
-  return { textValue, tags, tagSuggestions, setTags, handleChange }
+  // Return values
+  return {
+    textValue,
+    tags,
+    tagSuggestions,
+    handleChange,
+    handleChipDelete,
+    handleChipClick,
+  }
 }

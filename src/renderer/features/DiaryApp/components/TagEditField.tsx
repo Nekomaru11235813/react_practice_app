@@ -39,7 +39,7 @@ export const TagEditField: React.FC<TagEditFieldProps> = () => {
               key={tag.id}
               tag={tag}
               onClick={handleChipClick}
-              onDelete={() => handleChipDelete(tag, tags)}
+              onDelete={() => handleChipDelete(tag)}
             />
           )
         })}
