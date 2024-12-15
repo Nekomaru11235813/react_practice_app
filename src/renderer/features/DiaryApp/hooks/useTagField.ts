@@ -16,13 +16,6 @@ export const useTagField = (
     null
   )
   const [tagSuggestions, setTagSuggestions] = React.useState<Tag[]>([])
-
-  // useEffect
-  React.useEffect(() => {
-    setTags(defaultTags)
-    setTextValue(defaultInputValue)
-  }, [defaultTags, defaultInputValue])
-
   // Functions
   // Helper functions
   const hasDelimiter = (text: string) => {
@@ -77,7 +70,17 @@ export const useTagField = (
     setTagSuggestions(newTagSuggestions)
   }
 
-  // Event handlers
+  // View
+  // useEffect
+  React.useEffect(() => {
+    setStates({
+      newTextValue: defaultInputValue,
+      newTags: defaultTags,
+      newTagSuggestions: [],
+    })
+    resetSuggestTimer(() => {}, 0)
+  }, [defaultTags, defaultInputValue])
+  // Event
   // chip event handlers
   const handleChipDelete = (tag: Tag) => {
     const newTags = tags.filter(t => t.id !== tag.id)
