@@ -16,16 +16,8 @@ const defaultTags: Tag[] = [
 
 export const TagEditField: React.FC<TagEditFieldProps> = () => {
   const tagService = container.resolve<TagServiceI>('tagService')
-  const { textValue, tags, setTags, handleChange } = useTagField(
-    defaultTags,
-    '',
-    tagService
-  )
-  const handleChipDelete = (tag: Tag, existingTags: Tag[]) => {
-    const newTags = existingTags.filter(t => t.id !== tag.id)
-    setTags(newTags)
-  }
-  const handleChipClick = () => {}
+  const { textValue, tags, handleChange, handleChipClick, handleChipDelete } =
+    useTagField(defaultTags, '', tagService)
   return (
     <Box
       display={'flex'}
