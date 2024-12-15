@@ -1,6 +1,6 @@
 import React from 'react'
 import { Chip } from '@mui/material'
-import { Tag } from './TagEditField'
+import { Tag } from '../../../../types/diaryApp'
 
 export interface TagChipProps {
   tag: Tag

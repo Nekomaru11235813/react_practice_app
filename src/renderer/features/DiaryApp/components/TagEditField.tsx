@@ -1,14 +1,12 @@
 import { Box, InputBase } from '@mui/material'
 import React from 'react'
 import { TagChip } from './TagChip'
+import { Tag } from '../../../../types/diaryApp'
+import { container } from 'tsyringe'
+import { TagServiceI } from '../API/tagServiceI'
+import { useTagField } from '../hooks/useTagField'
 
 export interface TagEditFieldProps {}
-
-export type Tag = {
-  id: number
-  name: string
-  isSaved: boolean
-}
 
 const defaultTags: Tag[] = [
   { id: 1, name: 'タグ1', isSaved: true },
@@ -17,43 +15,17 @@ const defaultTags: Tag[] = [
 ]
 
 export const TagEditField: React.FC<TagEditFieldProps> = () => {
-  const [textValue, setTextValue] = React.useState<string>('')
-  const [tags, setTags] = React.useState<Tag[]>(defaultTags)
-
-  const handleChipDelete = (tag: Tag) => {
-    const newTags = tags.filter(t => t.id !== tag.id)
+  const tagService = container.resolve<TagServiceI>('tagService')
+  const { textValue, tags, setTags, handleChange } = useTagField(
+    defaultTags,
+    '',
+    tagService
+  )
+  const handleChipDelete = (tag: Tag, existingTags: Tag[]) => {
+    const newTags = existingTags.filter(t => t.id !== tag.id)
     setTags(newTags)
   }
   const handleChipClick = () => {}
-  const delimiters = /[ 　\t\n]/g
-  const hasDelimiter = (text: string) => {
-    return text.match(delimiters) !== null
-  }
-  const isValidNewTag = (tagName: string, tags: Tag[]) => {
-    return (
-      tagName.match(delimiters) == null &&
-      tagName !== '' &&
-      !tags.some(t => t.name === tagName)
-    )
-  }
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value
-    if (hasDelimiter(inputValue)) {
-      const lastId = tags.length > 0 ? tags[tags.length - 1].id : 0
-      const newTags = inputValue
-        .split(delimiters)
-        .filter(tagName => isValidNewTag(tagName, tags))
-        .map((tagName, index) => {
-          return { id: lastId + index + 1, name: tagName, isSaved: false }
-        })
-      console.log(newTags)
-      setTags([...tags, ...newTags])
-      setTextValue('')
-    } else {
-      setTextValue(e.target.value)
-    }
-  }
-
   return (
     <Box
       display={'flex'}
@@ -75,7 +47,7 @@ export const TagEditField: React.FC<TagEditFieldProps> = () => {
               key={tag.id}
               tag={tag}
               onClick={handleChipClick}
-              onDelete={() => handleChipDelete(tag)}
+              onDelete={() => handleChipDelete(tag, tags)}
             />
           )
         })}
