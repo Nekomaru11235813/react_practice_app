@@ -25,8 +25,12 @@ import { DiaryDTO } from '../../../types/diaryApp'
 import { Summary } from '../../../types/diaryApp'
 import { DrawerMenu } from './components/DrawerMenu'
 import { EditorArea } from './components/EditorArea'
+import { Tag } from '../../../types/diaryApp'
+import { TagServiceI } from './API/tagServiceI'
+
 const App: React.FC = () => {
   const diaryAppService = container.resolve<DiaryAppServiceI>('diaryAppService')
+  const tagService = container.resolve<TagServiceI>('tagService')
   const [summaryList, setSummaryList] = useState<Summary[]>([])
   const [nowEditingDiary, setNowEditingDiary] = useState<DiaryDTO>({
     id: undefined,
@@ -35,6 +39,7 @@ const App: React.FC = () => {
     createdAt: undefined,
     updatedAt: undefined,
   })
+  const [nowEditingDiaryTags, setNowEditingDiaryTags] = useState<Tag[]>([])
   // 初期描画時にサマリーリスト、初期編集を取得
   useEffect(() => {
     const fetchData = async () => {
@@ -55,6 +60,19 @@ const App: React.FC = () => {
       console.log('cleanup')
     }
   }, [])
+  // 編集中の日記が変更されたら、タグを更新
+  useEffect(() => {
+    const id = nowEditingDiary.id
+    if (id === undefined) {
+      setNowEditingDiaryTags([])
+    } else {
+      const fetchTags = async () => {
+        const tags = await tagService.getTagsByArticleId(id)
+        setNowEditingDiaryTags(tags)
+      }
+      fetchTags()
+    }
+  }, [nowEditingDiary])
 
   const [drawerOpen, setDrawerOpen] = React.useState<boolean>(true)
 
@@ -77,6 +95,7 @@ const App: React.FC = () => {
         drawerOpen={drawerOpen}
         toggleDrawer={toggleDrawer}
         nowEditingDiary={nowEditingDiary}
+        nowEditingDiaryTags={nowEditingDiaryTags}
         setNowEditingDiary={setNowEditingDiary}
         setSummaryList={setSummaryList}
       />

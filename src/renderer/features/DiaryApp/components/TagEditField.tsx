@@ -6,18 +6,21 @@ import { container } from 'tsyringe'
 import { TagServiceI } from '../API/tagServiceI'
 import { useTagField } from '../hooks/useTagField'
 
-export interface TagEditFieldProps {}
+export interface TagEditFieldProps {
+  tags: Tag[]
+}
 
-const defaultTags: Tag[] = [
-  { id: 1, name: 'タグ1', isSaved: true },
-  { id: 2, name: 'タグ2', isSaved: true },
-  { id: 3, name: 'タグ3', isSaved: true },
-]
-
-export const TagEditField: React.FC<TagEditFieldProps> = () => {
+export const TagEditField: React.FC<TagEditFieldProps> = ({
+  tags: inputTags,
+}: TagEditFieldProps) => {
   const tagService = container.resolve<TagServiceI>('tagService')
-  const { textValue, tags, handleChange, handleChipClick, handleChipDelete } =
-    useTagField(defaultTags, '', tagService)
+  const {
+    textValue,
+    tags: resultTags,
+    handleChange,
+    handleChipClick,
+    handleChipDelete,
+  } = useTagField(inputTags, '', tagService)
   return (
     <Box
       display={'flex'}
@@ -33,7 +36,7 @@ export const TagEditField: React.FC<TagEditFieldProps> = () => {
       }}
     >
       <Box>
-        {tags.map(tag => {
+        {resultTags.map(tag => {
           return (
             <TagChip
               key={tag.id}

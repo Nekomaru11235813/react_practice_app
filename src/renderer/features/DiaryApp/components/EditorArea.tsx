@@ -8,11 +8,13 @@ import { DiaryDTO, SavedDiaryDTO, Summary } from '../../../../types/diaryApp'
 import { DiaryAppServiceI } from '../API/diaryAppServiceI'
 import { container } from '../../../app/diContainer'
 import { TagEditField } from './TagEditField'
+import { Tag } from '../../../../types/diaryApp'
 
 export interface EditorAreaProps {
   drawerOpen: boolean
   toggleDrawer: () => void
   nowEditingDiary: DiaryDTO
+  nowEditingDiaryTags: Tag[]
   setNowEditingDiary: (fn: (_: DiaryDTO) => DiaryDTO) => void
   setSummaryList: (fn: (_: Summary[]) => Summary[]) => void
 }
@@ -20,6 +22,7 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
   drawerOpen,
   toggleDrawer,
   nowEditingDiary,
+  nowEditingDiaryTags,
   setNowEditingDiary,
   setSummaryList,
 }) => {
@@ -118,7 +121,7 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
         value={nowEditingDiary.content}
         onChange={handleChange}
       />
-      <TagEditField />
+      <TagEditField tags={nowEditingDiaryTags} />
     </Box>
   )
 }

@@ -17,6 +17,12 @@ export const useTagField = (
   )
   const [tagSuggestions, setTagSuggestions] = React.useState<Tag[]>([])
 
+  // useEffect
+  React.useEffect(() => {
+    setTags(defaultTags)
+    setTextValue(defaultInputValue)
+  }, [defaultTags, defaultInputValue])
+
   // Functions
   // Helper functions
   const hasDelimiter = (text: string) => {
