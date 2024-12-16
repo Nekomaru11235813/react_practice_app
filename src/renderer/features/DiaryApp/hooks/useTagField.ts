@@ -1,9 +1,10 @@
 import React from 'react'
-import { Tag } from '../../../../types/diaryApp'
+import { Tag, TagWithUUID } from '../../../../types/diaryApp'
 import { TagServiceI } from '../API/tagServiceI'
+import { createUUID } from '../../../util/uniqueKey'
 
 export const useTagField = (
-  defaultTags: Tag[],
+  defaultTags: TagWithUUID[],
   defaultInputValue: string,
   tagService: TagServiceI
 ) => {
@@ -11,7 +12,7 @@ export const useTagField = (
   const DELIMITERS = /[ 　\t\n]/g
   // State
   const [textValue, setTextValue] = React.useState<string>(defaultInputValue)
-  const [tags, setTags] = React.useState<Tag[]>(defaultTags)
+  const [tags, setTags] = React.useState<TagWithUUID[]>(defaultTags)
   const [suggestTimer, setSuggestTimer] = React.useState<NodeJS.Timeout | null>(
     null
   )
@@ -28,13 +29,18 @@ export const useTagField = (
       !tags.some(t => t.name === tagName)
     )
   }
-  const generateNewTags = (inputValue: string, tags: Tag[]) => {
+  const generateNewTags = (inputValue: string, tags: TagWithUUID[]) => {
     const lastId = tags.length > 0 ? tags[tags.length - 1].id : 0
     const newTags = inputValue
       .split(DELIMITERS)
       .filter(tagName => isValidNewTag(tagName, tags))
       .map((tagName, index) => {
-        return { id: lastId + index + 1, name: tagName, isSaved: false }
+        return {
+          id: undefined,
+          name: tagName,
+          isSaved: false,
+          uuid: createUUID(),
+        }
       })
     return [...tags, ...newTags]
   }
@@ -56,7 +62,7 @@ export const useTagField = (
 
   interface setStatesProps {
     newTextValue: string
-    newTags: Tag[]
+    newTags: TagWithUUID[]
     newTagSuggestions: Tag[]
   }
 

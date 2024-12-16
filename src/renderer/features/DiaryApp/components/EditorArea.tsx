@@ -8,13 +8,13 @@ import { DiaryDTO, SavedDiaryDTO, Summary } from '../../../../types/diaryApp'
 import { DiaryAppServiceI } from '../API/diaryAppServiceI'
 import { container } from '../../../app/diContainer'
 import { TagEditField } from './TagEditField'
-import { Tag } from '../../../../types/diaryApp'
+import { TagWithUUID } from '../../../../types/diaryApp'
 
 export interface EditorAreaProps {
   drawerOpen: boolean
   toggleDrawer: () => void
   nowEditingDiary: DiaryDTO
-  nowEditingDiaryTags: Tag[]
+  nowEditingDiaryTags: TagWithUUID[]
   setNowEditingDiary: (fn: (_: DiaryDTO) => DiaryDTO) => void
   setSummaryList: (fn: (_: Summary[]) => Summary[]) => void
 }

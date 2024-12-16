@@ -1,9 +1,9 @@
 import React from 'react'
 import { Chip } from '@mui/material'
-import { Tag } from '../../../../types/diaryApp'
+import { TagWithUUID } from '../../../../types/diaryApp'
 
 export interface TagChipProps {
-  tag: Tag
+  tag: TagWithUUID
   onDelete: () => void
   onClick: () => void
 }

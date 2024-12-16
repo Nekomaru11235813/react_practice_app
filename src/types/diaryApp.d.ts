@@ -13,11 +13,17 @@ export type SavedDiaryDTO = {
   updatedAt: Date
 }
 
+export type TagDTO = {
+  articleId: string
+  tags: Tag[]
+}
+
 export type Tag = {
-  id: number
+  id: string | undefined
   name: string
   isSaved: boolean
 }
+export type TagWithUUID = Tag & { uuid: string }
 
 export type Summary = {
   id: { tag: 'Id'; value: string }

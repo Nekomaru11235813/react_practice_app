@@ -25,8 +25,9 @@ import { DiaryDTO } from '../../../types/diaryApp'
 import { Summary } from '../../../types/diaryApp'
 import { DrawerMenu } from './components/DrawerMenu'
 import { EditorArea } from './components/EditorArea'
-import { Tag } from '../../../types/diaryApp'
+import { Tag, TagWithUUID } from '../../../types/diaryApp'
 import { TagServiceI } from './API/tagServiceI'
+import { createUUID } from '../../util/uniqueKey'
 
 const App: React.FC = () => {
   const diaryAppService = container.resolve<DiaryAppServiceI>('diaryAppService')
@@ -39,7 +40,9 @@ const App: React.FC = () => {
     createdAt: undefined,
     updatedAt: undefined,
   })
-  const [nowEditingDiaryTags, setNowEditingDiaryTags] = useState<Tag[]>([])
+  const [nowEditingDiaryTags, setNowEditingDiaryTags] = useState<TagWithUUID[]>(
+    []
+  )
   // 初期描画時にサマリーリスト、初期編集を取得
   useEffect(() => {
     const fetchData = async () => {
@@ -67,7 +70,9 @@ const App: React.FC = () => {
       setNowEditingDiaryTags([])
     } else {
       const fetchTags = async () => {
-        const tags = await tagService.getTagsByArticleId(id)
+        const tags: TagWithUUID[] = (
+          await tagService.getTagsByArticleId(id)
+        ).map((tag: Tag) => ({ ...tag, uuid: createUUID() }))
         setNowEditingDiaryTags(tags)
       }
       fetchTags()

@@ -1,13 +1,13 @@
 import { Box, InputBase } from '@mui/material'
 import React from 'react'
 import { TagChip } from './TagChip'
-import { Tag } from '../../../../types/diaryApp'
+import { TagWithUUID } from '../../../../types/diaryApp'
 import { container } from 'tsyringe'
 import { TagServiceI } from '../API/tagServiceI'
 import { useTagField } from '../hooks/useTagField'
 
 export interface TagEditFieldProps {
-  tags: Tag[]
+  tags: TagWithUUID[]
 }
 
 export const TagEditField: React.FC<TagEditFieldProps> = ({
@@ -39,7 +39,7 @@ export const TagEditField: React.FC<TagEditFieldProps> = ({
         {resultTags.map(tag => {
           return (
             <TagChip
-              key={tag.id}
+              key={tag.uuid}
               tag={tag}
               onClick={handleChipClick}
               onDelete={() => handleChipDelete(tag)}
